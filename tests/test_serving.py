@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 from fastapi.testclient import TestClient
 
-from src.app.main import app, DEFAULTS, FIELD_ORDER, gradio_interface
+from src.app.main import app, DEFAULTS, FIELD_ORDER, LOW_RISK_EXAMPLE, gradio_interface, sync_internet, sync_phone
 from src.features.build_features import build_features
 from src.serving import inference
 
@@ -58,6 +58,19 @@ class ServingTests(unittest.TestCase):
     def test_ui_uses_same_inputs_and_prediction(self):
         text = gradio_interface(*[DEFAULTS[field] for field in FIELD_ORDER])
         self.assertIn(inference.predict(dict(DEFAULTS)), text)
+
+    def test_ui_examples_are_valid_and_render_both_outcomes(self):
+        for example, tone in ((DEFAULTS, "result-risk"), (LOW_RISK_EXAMPLE, "result-safe")):
+            html = gradio_interface(*[example[field] for field in FIELD_ORDER])
+            self.assertIn(tone, html)
+
+    def test_ui_locks_services_that_cannot_exist(self):
+        locked = sync_internet("No", "Yes", "No")
+        self.assertTrue(all(u["value"] == "No internet service" and not u["interactive"] for u in locked))
+        restored = sync_internet("DSL", "No internet service", "Yes")
+        self.assertEqual([u["value"] for u in restored], ["No", "Yes"])
+        self.assertEqual(sync_phone("No", "Yes")["value"], "No phone service")
+        self.assertEqual(sync_phone("Yes", "No phone service")["value"], "No")
 
     def test_prediction_failure_returns_server_error(self):
         with TestClient(app) as client, patch("src.app.main.predict_details", side_effect=RuntimeError("private details")):
