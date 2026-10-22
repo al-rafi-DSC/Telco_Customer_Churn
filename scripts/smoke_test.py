@@ -1,5 +1,6 @@
 """Check a running deployment using only Python's standard library."""
 import argparse
+import http.client
 import json
 import time
 import urllib.error
@@ -17,7 +18,7 @@ def main():
             with urllib.request.urlopen(base + "/", timeout=5) as response:
                 assert json.load(response)["status"] == "ok"
             break
-        except (urllib.error.URLError, TimeoutError):
+        except (OSError, http.client.HTTPException, ValueError):
             if time.monotonic() >= deadline:
                 raise
             time.sleep(2)
