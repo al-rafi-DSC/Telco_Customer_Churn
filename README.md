@@ -1,3 +1,13 @@
+> Based on the original project by [anesriad](https://github.com/anesriad/Telco-Customer-Churn-ML), adapted for free Docker deployment on Render.
+
+## Current deployment: GitHub + Render Free
+
+Start with [DEPLOYMENT.md](DEPLOYMENT.md) for local Docker testing, GitHub setup, CI, and Render deployment. Training order is documented in [RUN_ORDER.md](RUN_ORDER.md).
+
+The serving image uses `requirements-serving.txt` and the explicitly selected native XGBoost model in `src/serving/bundle/`. It does not require MLflow or AWS at runtime. GitHub Actions tests and builds the image; Render deploys successful `main` commits. Training continues locally with `scripts/run_pipeline.py`.
+
+The AWS notes below describe the original deployment and are retained for project history. They do not describe the current CI workflow.
+
 ## Telco Churn – End-to-End ML Project
 ### Purpose
 

@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: telco-churn
+    runtime: docker
+    plan: free
+    branch: main
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /
+    autoDeployTrigger: checksPass
+    envVars:
+      - key: PORT
+        value: "10000"

@@ -1,5 +1,12 @@
 # venvs
 .venv/
+.venv-*/
+.env
+.env.*
+!.env.example
+.aws/
+.pytest_cache/
+.gradio/
 venv/
 env/
 
@@ -20,3 +27,7 @@ data/processed/
 # BUT keep our bundled serving model in the repo
 !src/serving/model/
 !src/serving/model/**
+
+# Local tooling
+.codebase-memory/
+.venv-serving/
